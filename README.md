@@ -1,4 +1,4 @@
-# Notes for _The Go Programming Language_ by Alan A. A. Donovan and Brian W. Kernighan
+# Notes for _The Go Programming Language_
 
 ## Preface
 
