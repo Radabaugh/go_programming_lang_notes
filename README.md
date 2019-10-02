@@ -20,6 +20,22 @@ The Go project is more than just the language. It is also comprised of tools, st
 
 ## Tutorial
 
+### Hello, World
+
+Go code is organized into packages similar to libraries or modules from other languages. A package is one or more `.go` source files in a single directory that define what a package does.
+
+A source file starts with a package declaration. In the `helloworld` example, the package is `main` stating which package the file belongs to, followed by a list of other packages that it imports, and then declarations of the program that are stored in that file.
+
+The `fmt package` contains functions for printing formatted output and scanning input.
+
+`Package main` is special. It defines a standalone executable, not a library. The `main function` is also special. It marks the beginning of the program's execution.
+
+> A program will not compile if there are missing imports or if there are unnecessary ones.
+
+### Command-Line Arguments
+
+
+
 ## Program Structure
 
 ## Basic Data Types
