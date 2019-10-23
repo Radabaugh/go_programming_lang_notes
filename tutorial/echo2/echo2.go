@@ -8,7 +8,7 @@ import (
 
 func main() {
 	output, separation := "", ""
-	for _, arg := range os.Args[1:] {
+	for _, arg := range os.Args[0:] {
 		output += separation + arg
 		separation = " "
 	}
