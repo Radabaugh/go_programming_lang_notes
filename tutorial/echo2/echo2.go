@@ -4,13 +4,13 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
 func main() {
-	output, separation := "", ""
-	for _, arg := range os.Args[0:] {
-		output += separation + arg
-		separation = " "
+	output, separation := "", ": "
+	for i := 0; i < len(os.Args); i++ {
+		output = strconv.Itoa(i) + separation + os.Args[i]
+		fmt.Println(output)
 	}
-	fmt.Println(output)
 }
