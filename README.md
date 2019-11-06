@@ -135,15 +135,204 @@ if err := r.ParseForm() {
 
 ## Program Structure
 
+### Names
+
+All names start with either a letter or an underscore `_`. By convention, names should be in lower camel case. If a name begins with an upper-case letter it is `exported` which means it is visible and accessable outside of its package.
+
+### Short Variable Declaration
+
+Delcare and initialize a local variable:
+
+```go
+name := expression
+```
+
+Short variable declarations should be used over a normal variable declaration in most cases.
+
+### Packages and Files
+
+Packages in Go are the same as modules or libraries in other languages.
+
+```go
+$GOPATH/src/gopl.io/ch1/helloworld
+```
+
+`helloworld` contains one or more .go files needed for the helloworld package. Packages act as namespaces. You can hide information in packages. Remember: indentifiers starting with an upper-case letter are `exported` or visible outside of the package.
+
 ## Basic Data Types
+
+### Integers
+
+Integers allow signed and unsigned integer math. They come in four signed sizes: `int8`, `int16`, `int32`, and `int64`; as well as four unsigned sizes: `uint8`, `uint16`, `uint32`, `uint64`. There is also a generic `int` and `uint` that use the most efficient size. Keep in mind that an `int` of size 8 is not the same type as a `int8`. There also exists a `uintptr` type that is big enough to hold the bits of a pointer value.
+
+### Floats
+
+Floats come in two sizes: `float32` and `float64`. `float32` provides 6 decimals digits of percision, where as `float64` provides 15 decimal digits of percision. Use `float64` wherever possible to help avoid rounding errors.
+
+### Complex Numbers
+
+Complex numbers come in two sizes: `complex64` and `complex128`. This type creates a complex number from real and imaginary components.
+
+```go
+var x complex128 = complex(1,2)  // 1+2i
+var y complex128 = complex(3,4)  // 3+4i
+fmt.Println(x * y)               // "(-5+10i)"
+fmt.Println(real(x * y))         // "-5"
+fmt.Println(imag(x * y))         // "10"
+```
+
+Note the built in `real()` and `imag()` functions extract the real and imaginary components.
 
 ## Composite Types
 
+### Arrays
+
+Arrays are fixed-length sequences of zero or more elements of a single type. Because of their fixed-length, they are rarely used.
+
+```go
+var a [3]int               // array of 3 ints
+fmt.Println(a[0])          // print the first element
+fmt.Println(a[len(a) - 1]) // print the last element
+```
+
+### Slices
+
+Slices are connected to an underlying array. Slices gives access to a subsequence of the array. Slices have three compnents: `pointer` to the first element of the slice (not the array), `length` the number of slice elements (this number cannot exceed the cap), and `capacity` is usually the number of elements between the start of the slice and the end of the underlying array.
+
+### Maps
+
+Maps are references to a hash table. Written: `map[K]V` where _K_ and _V_ are the types of the map's _keys_ and _values_.
+
+```go
+ages := make(map[string]int) // empty map of ints with strings as keys
+
+ages := map[string]int {     // map literal
+ "alice": 31,
+ "charlie": 34,
+}
+```
+
 ## Functions
+
+### Multiple Return Values
+
+Functions can return more than one result. Often times this is the result and an error value.
+
+```go
+func name(args)([]string, error) {
+ // ...
+ return nil, err
+}
+```
+
+### Anonymous Function
+
+Named functions must be declared at the package level, where as function literals can denote a function value within any expression.
+
+```go
+// squares() returns a function that returns
+// the next square number each time it is called
+func squares() func() int {
+  var x int
+  return func() int {
+    x++
+    return x * x
+  }
+}
+
+func main() {
+   f := squares()
+   fmt.Println(f()) // "1"
+   fmt.Println(f()) // "4"
+   fmt.Println(f()) // "9"
+   fmt.Println(f()) // "16"
+```
+
+### Deferred Function Calls
+
+Deferred function calls call a function from inside another function. The deferred function and arguments are evaluated when the line is executed but the call does not get made until the containing function is finished. This is great for opening/closing files or locking/unlocking resources for example.
+
+```go
+func title(url string) error {
+   resp, err := http.Get(url)
+   if err != nil {
+      return err
+   }
+   defer resp.Body.Close()
+   // ...
+}
+```
 
 ## Methods
 
+### Method Declarations
+
+Method declarations are like function declarations but with an extra parameter before the name. This parameter attaches the function to the type of that parameter. This parameter is called the `receiver`. The receiver is vommonly named as the first letter of the type it represents.
+
+`p.Distance` is called a `selector` because it selects the appropriate Distance method. This allows us to use the name `Distance` for other methods, so long as they belong to different types.
+
+### Methods with a Pointer Receiver
+
+If a function needs to update a variable of if we wish to avoid copying an argument, we must pass the address of the variable using a pointer.
+
+```go
+func (p *Point) ScaleBy(factor float64) {
+   p.X *= factor
+   p.Y *= factor
+}
+```
+
+The name of this method is `(*Point).ScaleBy`. The parentheses are necessary.
+
+### Nil is a Valid Receiver Value
+
+```go
+// An IntList is a linked list of integers
+// A nil *IntList represents an empty list
+type IntList struct {
+   Value int
+   Tail *IntList
+}
+
+// sum returns the sum of the list elements
+func(list *IntList) Sum() int {
+   if list == nil {
+      return 0
+   }
+   return list.Value + list.Tail.Sum()
+}
+```
+
 ## Interfaces
+
+### Interfaces as Contracts
+
+Interfaces are abstract types. Interfaces don't expose the representation or external structure of its values or the set of basic operations they support. They only reveal some of its methods.
+
+### Interface Types
+
+An interface type specifies a set of methods that a concrete type must possess to be considered an instance of that interface.
+
+```go
+package io
+
+type Reader interface {
+   Read(p[]byte) (n int, err error)
+}
+
+// Embedding an interface allows us to
+// name another interface instead of writing
+// out all of its methods
+
+type ReaderWriter interface {
+   Reader
+   Write(p[]byte) (n int, err error)
+}
+```
+
+### Interface Satisfaction
+
+A type satisdies an interface only if it posesses all the methods the interface requires.
 
 ## Goroutines and Channels
 
