@@ -332,9 +332,62 @@ type ReaderWriter interface {
 
 ### Interface Satisfaction
 
-A type satisdies an interface only if it posesses all the methods the interface requires.
+A type satisfies an interface only if it posesses all the methods the interface requires.
 
 ## Goroutines and Channels
+
+### Goroutines
+
+Every concurrently executed activity is called a goroutine. You can assume a goroutine is similar to a thread, though there are some differences.
+
+New goroutines are created with the `go statement`.
+
+```go
+f()    // Call f(); wait for a return
+go f() // Create a new goroutine that calls f(); don't wait for a return
+```
+
+When the main function returns all goroutines are terminated and the program exits. Only the `main goroutine` can tell other goroutines to quit. No other goroutine may stop another, but there are ways to request a goroutine to stop.
+
+### Channels
+
+Channels are connections between concurrent goroutines. Channels allow goroutines to send values to another goroutine. Channels are type specific, and a channel's type is called it's `element type`.
+
+```go
+chan int
+```
+
+Using the `make` function to create a new channel.
+
+```go
+ch := make(chan int) // ch has type `chan int`
+```
+
+Channels can be told to `send`, `receive`, and `close`.
+
+```go
+// Send
+
+ch <- x // Send x through the channel
+
+// Receive
+
+x = <- ch // Receive expression in an assignment statement
+
+<- ch     // Receive statement; result is discarded
+
+// Close
+
+close(ch) // Subsequent attempts to send will result in panic
+```
+
+### Buffered/Unbuffered Channels
+
+```go
+ch = make(chan int)    // Unbuffered channel
+ch = make(chan int, 0) // Unbuffered channel
+ch = make(chan int, 3) // Buffered channel with a capasity of 3
+```
 
 ## Concurency with Shared Variables
 
